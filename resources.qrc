@@ -4,8 +4,6 @@
         <file>sprites/klee_catch_walk.png</file>
         <file>sprites/klee_idle.png</file>
         <file>sprites/klee_throw.png</file>
-        <file>sprites/klee_walk_v1.png</file>
-        <file>sprites/klee_walk_v2.png</file>
-        <file>sprites/klee_walk_v3.png</file>
+        <file>sprites/klee_walk.png</file>
     </qresource>
 </RCC>

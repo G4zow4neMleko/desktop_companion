@@ -32,9 +32,7 @@ DISTFILES += \
     sprites/klee_catch_walk.png \
     sprites/klee_idle.png \
     sprites/klee_throw.png \
-    sprites/klee_walk_v1.png \
-    sprites/klee_walk_v2.png \
-    sprites/klee_walk_v3.png
+    sprites/klee_walk.png
 
 RESOURCES += \
     resources.qrc
