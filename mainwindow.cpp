@@ -20,6 +20,12 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlag(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_NoSystemBackground, true);
     setAttribute(Qt::WA_TranslucentBackground, true);
+    ui->horizontalLayout->setContentsMargins(0,0,0,0);
+    ui->graphicsView->setContentsMargins(0,0,0,0);
+
+    //destroy statusbar and menubar
+    ui->statusbar->~QStatusBar();
+    ui->menubar->~QMenuBar();
 
     //scene transparency
     setStyleSheet("background:transparent;");
@@ -27,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent)
     //creating scene
     scene = new Scene(this);
     scene->setSceneRect(screen->geometry());
-
-    //Klee * klee = new Klee();
 
     ui->graphicsView->setScene(scene);
     scene->addItem(new Klee(screen));
