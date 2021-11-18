@@ -7,9 +7,13 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     frame_current = 0;
     frame_delay = 200;
     current_sheet = "klee_idle";
-    pos_x = 1800;
+    direction = "front";
+    decision = 0;
+    pos_x = screen->geometry().width()-600;
     pos_y = screen->geometry().height()-86-37;
-    rng_core = QRandomGenerator();
+    screen_width = screen->geometry().width();
+    screen_height = screen->geometry().height();
+    rng_core = QRandomGenerator().global()->generate();
 
 
     QDir directory(":/sprites");
@@ -23,7 +27,6 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
             (*frames).append(QPixmap.copy(i*64,0,64,86));
 
         filename.chop(4);
-        //QTextStream(stdout) << filename+"\n";
         animation_map.insert(filename, *frames);
     }
 
@@ -43,22 +46,24 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     connect(timer_decision, &QTimer::timeout, this, &Klee::Decision);
     timer_decision->start(2300);
 
-//    timer_pos = new QTimer();
-//    connect(timer_pos, &QTimer::timeout, this, &Klee::Pos_update);
-//    timer_pos->start(2300);
-
 };
 
 QRectF Klee::boundingRect() const
 {
+<<<<<<< HEAD
     return QRectF(0,0,1920,1080);
+=======
+    return QRectF(0,0,screen_width,screen_height);
+>>>>>>> bc20b2d4d89b8ffbb09d7744cfc5d8187f9b48ed
 };
 
 void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QTextStream(stdout) << frame_current <<"\n";
-    painter->drawPixmap(pos_x,pos_y, animation_map[current_sheet][frame_current]);
-    QTextStream(stdout) << "n2\n";
+    if(direction == "right")
+        painter->drawPixmap(pos_x,pos_y, animation_map[current_sheet][frame_current].transformed(QTransform().scale(-1,1)));
+    else
+        painter->drawPixmap(pos_x,pos_y, animation_map[current_sheet][frame_current]);
+
     Q_UNUSED(option);
     Q_UNUSED(widget);
 };
@@ -80,11 +85,15 @@ void Klee::Blink()
 
 void Klee::Decision()
 {
+<<<<<<< HEAD
     decision = QRandomGenerator::global()->bounded(3);
+=======
+>>>>>>> bc20b2d4d89b8ffbb09d7744cfc5d8187f9b48ed
     switch(decision)
     {
     case 0:
         current_sheet = "klee_idle";
+        direction = "front";
         timer_frame->stop();
         nextFrame();
         frame_delay = 200;
@@ -92,6 +101,7 @@ void Klee::Decision()
         break;
     case 1:
         current_sheet = "klee_walk";
+        direction = "right";
         timer_frame->stop();
         nextFrame();
         frame_delay = 60;
@@ -99,20 +109,40 @@ void Klee::Decision()
         break;
     case 2:
         current_sheet = "klee_walk";
+        direction = "left";
         timer_frame->stop();
         nextFrame();
         frame_delay = 60;
         timer_frame->start(frame_delay);
         break;
     }
-
-    //QTextStream(stdout) << decision << "\n";
+    decision = rng_core.bounded(3);
 };
 
 void Klee::Update()
 {
-    //QTextStream(stdout) << "update\n" << decision << "\n";
-    if(current_sheet == "klee_walk")
-        pos_x -= 2;
+    if(current_sheet == "klee_walk" && direction == "left")
+    {
+        if(pos_x > 0)
+            pos_x -= 2;
+        else
+        {
+            decision = 1;
+            Decision();
+            QTextStream(stdout) << "hit wall";
+        }
+    }
+    else if(current_sheet == "klee_walk" && direction == "right")
+    {
+        if(pos_x < (screen_width-64))
+            pos_x += 2;
+        else
+        {
+            decision = 2;
+            Decision();
+            QTextStream(stdout) << "hit wall";
+        }
+    }
+
     this->update(boundingRect());
 };
