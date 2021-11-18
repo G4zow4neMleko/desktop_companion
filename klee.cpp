@@ -51,7 +51,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
 QRectF Klee::boundingRect() const
 {
-    return QRectF(pos_x,pos_y,1920,1080);
+    return QRectF(0,0,1920,1080);
 };
 
 void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -80,7 +80,7 @@ void Klee::Blink()
 
 void Klee::Decision()
 {
-    decision = rng_core.bounded(3);
+    decision = QRandomGenerator::global()->bounded(3);
     switch(decision)
     {
     case 0:
