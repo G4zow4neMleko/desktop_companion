@@ -3,7 +3,7 @@
         <file>sprites/klee_catch.png</file>
         <file>sprites/klee_catch_walk.png</file>
         <file>sprites/klee_idle.png</file>
-        <file>sprites/klee_throw.png</file>
         <file>sprites/klee_walk.png</file>
+        <file>sprites/klee_throw.png</file>
     </qresource>
 </RCC>

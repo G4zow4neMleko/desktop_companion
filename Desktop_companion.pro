@@ -30,8 +30,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     sprites/klee_catch.png \
     sprites/klee_catch_walk.png \
-    sprites/klee_idle.png \
     sprites/klee_throw.png \
+    sprites/klee_idle.png \
     sprites/klee_walk.png
 
 RESOURCES += \

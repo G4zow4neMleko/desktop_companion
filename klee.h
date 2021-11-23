@@ -9,12 +9,16 @@
 #include <QPainter>
 #include <QScreen>
 #include <QRandomGenerator>
+#include <QGraphicsSceneMouseEvent>
+#include <QCursor>
 
 class Klee : public QObject , public QGraphicsItem
 {
     Q_OBJECT
 public:
     explicit Klee(QScreen *screen);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
 
@@ -34,6 +38,8 @@ private:
     int frame_delay;
     int screen_width;
     int screen_height;
+    bool draggable;
+    QScreen *main_screen;
     QRandomGenerator rng_core;
 
     QTimer *timer_frame;

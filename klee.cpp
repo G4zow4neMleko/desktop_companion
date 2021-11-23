@@ -9,6 +9,8 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     current_sheet = "klee_idle";
     direction = "front";
     decision = 0;
+    draggable = false;
+    main_screen = screen;
     pos_x = screen->geometry().width()-600;
     pos_y = screen->geometry().height()-86-37;
     screen_width = screen->geometry().width();
@@ -28,6 +30,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
         filename.chop(4);
         animation_map.insert(filename, *frames);
+        QTextStream(stdout) << filename+"\n";
     }
 
     timer_update = new QTimer();
@@ -48,13 +51,10 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
 };
 
+
 QRectF Klee::boundingRect() const
 {
-<<<<<<< HEAD
-    return QRectF(0,0,1920,1080);
-=======
     return QRectF(0,0,screen_width,screen_height);
->>>>>>> bc20b2d4d89b8ffbb09d7744cfc5d8187f9b48ed
 };
 
 void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -85,10 +85,6 @@ void Klee::Blink()
 
 void Klee::Decision()
 {
-<<<<<<< HEAD
-    decision = QRandomGenerator::global()->bounded(3);
-=======
->>>>>>> bc20b2d4d89b8ffbb09d7744cfc5d8187f9b48ed
     switch(decision)
     {
     case 0:
@@ -129,7 +125,7 @@ void Klee::Update()
         {
             decision = 1;
             Decision();
-            QTextStream(stdout) << "hit wall";
+            //QTextStream(stdout) << "hit wall";
         }
     }
     else if(current_sheet == "klee_walk" && direction == "right")
@@ -140,9 +136,35 @@ void Klee::Update()
         {
             decision = 2;
             Decision();
-            QTextStream(stdout) << "hit wall";
+            //QTextStream(stdout) << "hit wall";
         }
+    }
+    else if(draggable && current_sheet == "klee_throw")
+    {
+        pos_x = cursor().pos().x()-20;
+        pos_y = cursor().pos().y()-32;
     }
 
     this->update(boundingRect());
+};
+
+void Klee::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        draggable = true;
+        current_sheet = "klee_throw";
+        nextFrame();
+        QTextStream(stdout) << "mouse click!\n";
+    }
+};
+
+void Klee::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        draggable = false;
+        Decision();
+        QTextStream(stdout) << "mouse release!\n";
+    }
 };
