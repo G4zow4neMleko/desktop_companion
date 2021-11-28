@@ -155,6 +155,7 @@ void Klee::mousePressEvent(QGraphicsSceneMouseEvent *event)
         draggable = true;
         current_sheet = "klee_throw";
         nextFrame();
+        timer_decision->stop();
         QTextStream(stdout) << "mouse click!\n";
     }
 };
@@ -165,6 +166,7 @@ void Klee::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         draggable = false;
         Decision();
+        timer_decision->start(2300);
         QTextStream(stdout) << "mouse release!\n";
     }
 };
