@@ -30,7 +30,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
         filename.chop(4);
         animation_map.insert(filename, *frames);
-        QTextStream(stdout) << filename+"\n";
+        //QTextStream(stdout) << filename+"\n";
     }
 
     timer_update = new QTimer();
@@ -79,7 +79,7 @@ void Klee::nextFrame()
 
 void Klee::Blink()
 {
-    if(current_sheet == "klee_catch_walk" || current_sheet == "klee_walk" || current_sheet == "klee_idle")
+    if(current_sheet == "klee_catch_walk" || current_sheet == "klee_walk" || current_sheet == "klee_idle" || current_sheet == "klee_throw")
         blink = 0;
 };
 
@@ -111,8 +111,17 @@ void Klee::Decision()
         frame_delay = 60;
         timer_frame->start(frame_delay);
         break;
+   case 3:
+        current_sheet = "klee_catch_walk";
+        if(direction == "front")
+            direction = "left";
+        timer_frame->stop();
+        nextFrame();
+        frame_delay = 100;
+        timer_frame->start(frame_delay);
+        break;
     }
-    decision = rng_core.bounded(3);
+    decision = rng_core.bounded(4);
 };
 
 void Klee::Update()
@@ -139,11 +148,96 @@ void Klee::Update()
             //QTextStream(stdout) << "hit wall";
         }
     }
-    else if(draggable && current_sheet == "klee_throw")
+    else if(draggable)
     {
-        pos_x = cursor().pos().x()-20;
-        pos_y = cursor().pos().y()-32;
+        direction_vector[0] = (cursor().pos().x() - 20 - pos_x - 20)/4;
+        direction_vector[1] = (cursor().pos().y() - 22 - pos_y)/4;
+
+        if(direction_vector[0] > 0)
+            direction = "right";
+        else if(direction_vector[0] < 0)
+            direction = "left";
+
+        pos_x += direction_vector[0];
+        pos_y += direction_vector[1];
     }
+    else if(!draggable && current_sheet == "klee_throw" )
+    {
+        pos_x += direction_vector[0]/2;
+        pos_y += direction_vector[1]/2;\
+
+        if(pos_x > (screen_width-64) )
+        {
+            direction_vector[0] *= -1;
+            pos_x = screen_width-64;
+        }
+
+        else if(pos_x < 0)
+        {
+            direction_vector[0] *= -1;
+            pos_x = 0;
+        }
+
+        if(direction_vector[0]>0)
+            direction = "right";
+        else
+            direction = "left";
+
+        if(pos_y > (screen_height - 86-37) && direction_vector[1]>0)
+        {
+            pos_y = screen_height - 86-37;
+            direction_vector[1] *= -0.6;
+            direction_vector[0] *= 0.93;
+        }
+
+        if(static_cast<int>(sqrt(direction_vector[0]*direction_vector[0] + direction_vector[1]*direction_vector[1])) <= 4
+                && pos_y <= (screen_height-86-36) && pos_y >= (screen_height-86-38) )
+        {
+            direction_vector[0] = 0;
+            direction_vector[1] = 0;
+            pos_y = screen_height-86-37;
+            timer_decision->start(2300);
+            Decision();
+        }
+
+        direction_vector[1] += 9;
+        direction_vector[0] /= 1.04;
+    }
+    else if(current_sheet == "klee_catch_walk")
+    {
+        if(cursor().pos().x() < (pos_x+32+100) && cursor().pos().x() > (pos_x+32-100)
+                && cursor().pos().y() < (pos_y+43+100) && cursor().pos().y() > (pos_y+43-100))
+        {
+            nextFrame();
+            if(direction == "left")
+            {
+                pos_x -= 5;
+                cursor().setPos(pos_x+25,pos_y+43);
+                if(pos_x<0)
+                {
+                    direction = "right";
+                    pos_x = 0;
+                    cursor().setPos(pos_x+32,pos_y+43);
+                }
+            }
+            else
+            {
+                pos_x += 5;
+                cursor().setPos(pos_x+32,pos_y+43);
+                if( pos_x > (screen_width-64) )
+                {
+                    direction = "left";
+                    pos_x = screen_width-64;
+                    cursor().setPos(pos_x+25,pos_y+43);
+                }
+            }
+        }
+        else
+        {
+            Decision();
+        }
+    }
+
 
     this->update(boundingRect());
 };
@@ -154,9 +248,8 @@ void Klee::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         draggable = true;
         current_sheet = "klee_throw";
-        nextFrame();
         timer_decision->stop();
-        QTextStream(stdout) << "mouse click!\n";
+        nextFrame();
     }
 };
 
@@ -165,8 +258,5 @@ void Klee::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(event->button() == Qt::LeftButton)
     {
         draggable = false;
-        Decision();
-        timer_decision->start(2300);
-        QTextStream(stdout) << "mouse release!\n";
     }
 };

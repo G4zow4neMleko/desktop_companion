@@ -38,6 +38,7 @@ private:
     int frame_delay;
     int screen_width;
     int screen_height;
+    float direction_vector[2] = {0.0,0.0};
     bool draggable;
     QScreen *main_screen;
     QRandomGenerator rng_core;
