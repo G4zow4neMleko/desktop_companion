@@ -14,6 +14,8 @@ SOURCES += \
     mainwindow.cpp \
     scene.cpp
 
+#LIBS += commctrl.h
+
 HEADERS += \
     klee.h \
     mainwindow.h \

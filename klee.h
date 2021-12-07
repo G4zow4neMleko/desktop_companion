@@ -11,6 +11,8 @@
 #include <QRandomGenerator>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
+#include <qt_windows.h>
+#include <commctrl.h>
 
 class Klee : public QObject , public QGraphicsItem
 {
@@ -42,6 +44,10 @@ private:
     bool draggable;
     QScreen *main_screen;
     QRandomGenerator rng_core;
+
+    HWND hd;
+    HANDLE he;
+    DWORD Pi;
 
     QTimer *timer_frame;
     QTimer *timer_blink;
