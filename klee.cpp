@@ -51,8 +51,8 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
 
     hd = FindWindowA("Progman", NULL);
-    hd = FindWindowEx(hd, NULL, L"SHELLDLL_DefView", NULL);
-    hd = FindWindowEx(hd, NULL, L"SysListView32", NULL);
+    hd = FindWindowEx(hd, 0, L"SHELLDLL_DefView", NULL);
+    hd = FindWindowEx(hd, 0, L"SysListView32", NULL);
 
     GetWindowThreadProcessId(hd, &Pi);
     he = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false,Pi);
@@ -60,10 +60,19 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     POINT *pC =  (POINT*) VirtualAllocEx(he,NULL,sizeof(POINT),MEM_COMMIT,PAGE_READWRITE);
     WriteProcessMemory(he, pC, &pC, sizeof(POINT), NULL);
 
-        int count = (int)LVM_GETITEMCOUNT;
-        QTextStream(stdout) << count << "\n";
-    for(int i=0; i<1000; ++i)
-        ListView_SetItemPosition(hd,0,i,i);
+    POINT pt;
+    ListView_GetItemPosition(hd,0,pC);
+    //ReadProcessMemory(hd,pC,&pt,sizeof (POINT),NULL);
+    QTextStream(stdout) << pt.x << "  " << pt.y << "\n";
+
+    //for(int i=0; i<1000; ++i)
+    //ListView_SetItemPosition(hd,0,200,200);
+    QTextStream(stdout) << "ilosc " << ListView_GetItemCount(hd) << "\n";
+
+    ListView_GetItemPosition(hd,0,pC);
+    //ReadProcessMemory(hd,pC,&pt,sizeof (POINT),NULL);
+    QTextStream(stdout) << pt.x << "  " << pt.y << "\n";
+
     VirtualFreeEx(he,pC,0,MEM_RELEASE);
 };
 
