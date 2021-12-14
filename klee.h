@@ -11,7 +11,7 @@
 #include <QRandomGenerator>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
-#include <qt_windows.h>
+#include <windows.h>
 #include <commctrl.h>
 
 class Klee : public QObject , public QGraphicsItem

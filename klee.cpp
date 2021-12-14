@@ -50,28 +50,38 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     timer_decision->start(2300);
 
 
-    hd = FindWindowA("Progman", NULL);
+
+//    hd = GetDesktopWindow();
+    hd = FindWindowA("Progman",NULL);
     hd = FindWindowEx(hd, 0, L"SHELLDLL_DefView", NULL);
     hd = FindWindowEx(hd, 0, L"SysListView32", NULL);
 
     GetWindowThreadProcessId(hd, &Pi);
     he = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false,Pi);
 
+    QTextStream(stdout) << "ilosc " << ListView_GetItemCount(hd) << "\n";
+
     POINT *pC =  (POINT*) VirtualAllocEx(he,NULL,sizeof(POINT),MEM_COMMIT,PAGE_READWRITE);
     WriteProcessMemory(he, pC, &pC, sizeof(POINT), NULL);
 
     POINT pt;
-    ListView_GetItemPosition(hd,0,pC);
-    //ReadProcessMemory(hd,pC,&pt,sizeof (POINT),NULL);
+    ListView_GetItemPosition(hd,20,pC);
+    ReadProcessMemory(hd, pC, &pt, sizeof(POINT), NULL);
     QTextStream(stdout) << pt.x << "  " << pt.y << "\n";
+
+
+//    HWND tp;
+//    tp = GetNextWindow(GetTopWindow(GetParent(FindWindowA("Progman",NULL))),2);
+//    RECT rect;
+//    GetWindowRect(tp,&rect);
+
+//    QTextStream(stdout) << rect.right  << " " << rect.bottom << "\n";
 
     //for(int i=0; i<1000; ++i)
     //ListView_SetItemPosition(hd,0,200,200);
-    QTextStream(stdout) << "ilosc " << ListView_GetItemCount(hd) << "\n";
 
-    ListView_GetItemPosition(hd,0,pC);
     //ReadProcessMemory(hd,pC,&pt,sizeof (POINT),NULL);
-    QTextStream(stdout) << pt.x << "  " << pt.y << "\n";
+    //QTextStream(stdout) << pt.x << "  " << pt.y << "\n";
 
     VirtualFreeEx(he,pC,0,MEM_RELEASE);
 };
@@ -95,6 +105,25 @@ void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 void Klee::nextFrame()
 {
+    HWND tp;
+    LPSTR lpString = nullptr;
+    tp = GetTopWindow(FindWindowA("Progman",NULL));
+    //tp = GetActiveWindow();
+    RECT rect;
+    GetWindowRect(tp,&rect);
+
+//    GetWindowTextA(tp,lpString,20);
+//    QTextStream(stdout) << lpString << "\n";
+
+//    WM_GETTEXT;
+//    QTextStream(stdout) << lpString << "\n";
+
+//    POINT pt;
+//    ClientToScreen(tp,&pt);
+
+    QTextStream(stdout) << rect.right  << " " << rect.bottom << "\n";
+    //QTextStream(stdout) << pt.x  << " " << pt.y << "\n";
+
     frame_current = (frame_current+1) % (animation_map[current_sheet].length() - (1*blink));
     if(blink == 0 && frame_current == (animation_map[current_sheet].length()-1) )
     {
