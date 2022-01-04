@@ -13,6 +13,9 @@
 #include <QCursor>
 #include <windows.h>
 #include <commctrl.h>
+#include <QPoint>
+#include <QGraphicsScene>
+#include <QDir>
 
 class Klee : public QObject , public QGraphicsItem
 {
@@ -29,6 +32,7 @@ private slots:
     void Blink();
     void Decision();
     void Update();
+    void DebugT();
 
 private:
 
@@ -53,6 +57,7 @@ private:
     QTimer *timer_blink;
     QTimer *timer_decision;
     QTimer *timer_update;
+    QTimer *timer_debug;
     QMap<QString,QVector<QPixmap>> animation_map;
     QString current_sheet;
     QString direction;

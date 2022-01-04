@@ -1,9 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "klee.h"
+#include "actionbutton.h"
 #include "QGraphicsPixmapItem"
 #include <QScreen>
 #include <QTimer>
+#include <QGraphicsScene>
+#include <QCursor>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -35,8 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
     scene->setSceneRect(screen->geometry());
 
     ui->graphicsView->setScene(scene);
+    //scene->addItem(new Klee(screen));
+    scene->addItem(new ActionButton(screen));
     scene->addItem(new Klee(screen));
-
 
 
 }
