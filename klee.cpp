@@ -106,9 +106,9 @@ void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 void Klee::nextFrame()
 {
     HWND tp;
-    LPSTR lpString = nullptr;
-    tp = GetTopWindow(FindWindowA("Progman",NULL));
-    //tp = GetActiveWindow();
+    //LPSTR lpString = nullptr;
+    //tp = GetNextWindow(GetTopWindow(FindWindowA("Progman",NULL)),2);
+    tp = GetActiveWindow();
     RECT rect;
     GetWindowRect(tp,&rect);
 
