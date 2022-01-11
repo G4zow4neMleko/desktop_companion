@@ -6,7 +6,7 @@
 #include <QPainter>
 #include <QScreen>
 #include <QWidget>
-#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
 #include <QCursor>
 #include <QTimer>
 #include "optionscontainer.h"
@@ -20,7 +20,6 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
-
 signals:
 
 
@@ -32,12 +31,14 @@ private slots:
 private:
     int pos_x;
     int pos_y;
-    int brush_thickness = 1;
     int screen_width;
     int screen_height;
+    int brush_thickness = 1;
     bool draggable = false;
     int width;
     int height;
+    Qt::GlobalColor color;
+    QScreen* screen;
 
     optionsContainer* option_container = nullptr;
     QTimer* timer_update;

@@ -36,11 +36,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    sprites/klee_catch.png \
-    sprites/klee_catch_walk.png \
-    sprites/klee_throw.png \
-    sprites/klee_idle.png \
-    sprites/klee_walk.png
+    sprites/klee/klee_catch.png \
+    sprites/klee/klee_catch_walk.png \
+    sprites/klee/klee_throw.png \
+    sprites/klee/klee_idle.png \
+    sprites/klee/klee_walk.png \
+    sprites/food/cookie.png
 
 RESOURCES += \
     resources.qrc

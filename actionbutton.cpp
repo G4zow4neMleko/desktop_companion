@@ -1,13 +1,15 @@
 #include "actionbutton.h"
 
-ActionButton::ActionButton(QScreen *screen) : QObject(), QGraphicsItem()
+ActionButton::ActionButton(QScreen *Screen) : QObject(), QGraphicsItem()
 {
-    screen_width = screen->geometry().width();
-    screen_height = screen->geometry().height();
+    screen = Screen;
+    screen_width = Screen->geometry().width();
+    screen_height = Screen->geometry().height();
     pos_x = 100;
     pos_y = 100;
     width = 50;
     height = 50;
+    color = Qt::red;
 
     timer_update = new QTimer();
     connect(timer_update, &QTimer::timeout, this, &ActionButton::Update);
@@ -31,7 +33,7 @@ QRectF ActionButton::boundingRect() const
 void ActionButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     setPos(pos_x,pos_y);
-    painter->setBrush(Qt::red);
+    painter->setBrush(color);
     painter->setPen(QPen(Qt::black, brush_thickness));
     painter->drawEllipse(0,0,width,height);
     painter->setPen(QPen(Qt::white, 3));
@@ -45,7 +47,7 @@ void ActionButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(!option_container)
     {
-        option_container = new optionsContainer(this);
+        option_container = new optionsContainer(this, screen);
         scene()->addItem(option_container);
     }
 
@@ -56,7 +58,9 @@ void ActionButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ActionButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if( option_container->isVisible() || draggable)
+    if( option_container->isVisible() && !draggable)
+        option_container->setVisible(false);
+    else if(!option_container->isVisible() && draggable)
         option_container->setVisible(false);
     else
         option_container->setVisible(true);
@@ -71,11 +75,11 @@ void ActionButton::Update()
 {
     if(draggable)
     {
-        option_container->setPos(pos().x()+width/2, pos().y()+height/2);
         brush_thickness = 3;
-        pos_x = cursor().pos().x()- width/2;
-        pos_y = cursor().pos().y()- height/2;
+        pos_x = cursor().pos().x()- width/2 +2;
+        pos_y = cursor().pos().y()- height/2 +4;
     }
+
     if(pos_x+width > screen_width)
         pos_x = screen_width-width;
     else if(pos_x < 0)
@@ -85,6 +89,7 @@ void ActionButton::Update()
         pos_y = screen_height-height;
     else if(pos_y < 0)
         pos_y = 0;
+
 
     this->update(boundingRect());
 }
@@ -99,3 +104,4 @@ void ActionButton::SetDragTrue()
     if(!draggable)
         draggable = true;
 }
+

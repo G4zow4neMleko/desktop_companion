@@ -17,12 +17,12 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     rng_core = QRandomGenerator().global()->generate();
 
 
-    QDir directory(":/sprites");
+    QDir directory(":/sprites/klee/");
     QStringList images = directory.entryList(QStringList() << "*.png" << "*.PNG",QDir::Files);
 
     foreach(QString filename, images) {
         QVector<QPixmap> *frames = new QVector<QPixmap>;
-        QPixmap QPixmap(":/sprites/"+filename);
+        QPixmap QPixmap(":/sprites/klee/"+filename);
 
         for(int i=0; i< (QPixmap.size().width()/64); ++i)
             (*frames).append(QPixmap.copy(i*64,0,64,86));
