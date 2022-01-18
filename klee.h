@@ -34,8 +34,12 @@ private slots:
     void Update();
     void DebugT();
 
-private:
+public slots:
+    void Feed();
 
+private:
+    int width;
+    int height;
     int frame_current;
     int pos_x;
     int pos_y;

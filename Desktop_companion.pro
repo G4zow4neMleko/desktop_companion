@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     actionbutton.cpp \
+    food.cpp \
     klee.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 
 HEADERS += \
     actionbutton.h \
+    food.h \
     klee.h \
     mainwindow.h \
     option.h \

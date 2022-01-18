@@ -21,12 +21,14 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-
+    void OptionClicked();
 
 private slots:
     void Update();
     void DebugT();
     void SetDragTrue();
+    void OptionClickedEmit();
+
 
 private:
     int pos_x;

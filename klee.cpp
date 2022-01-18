@@ -2,6 +2,8 @@
 
 Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 {
+    width = 64;
+    height = 86;
     blink = 1;
     frame_current = 0;
     frame_delay = 200;
@@ -11,7 +13,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     draggable = false;
     main_screen = screen;
     pos_x = screen->geometry().width()-600;
-    pos_y = screen->geometry().height()-86-37;
+    pos_y = screen->geometry().height()-height-37;
     screen_width = screen->geometry().width();
     screen_height = screen->geometry().height();
     rng_core = QRandomGenerator().global()->generate();
@@ -25,7 +27,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
         QPixmap QPixmap(":/sprites/klee/"+filename);
 
         for(int i=0; i< (QPixmap.size().width()/64); ++i)
-            (*frames).append(QPixmap.copy(i*64,0,64,86));
+            (*frames).append(QPixmap.copy(i*width,0,width,height));
 
         filename.chop(4);
         animation_map.insert(filename, *frames);
@@ -93,7 +95,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
 QRectF Klee::boundingRect() const
 {
-    return QRectF(0,0,65,86);
+    return QRectF(0,0,width,height);
 };
 
 void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -197,7 +199,7 @@ void Klee::Update()
     }
     else if(current_sheet == "klee_walk" && direction == "right")
     {
-        if(pos_x < (screen_width-64))
+        if(pos_x < (screen_width-width))
             pos_x += 2;
         else
         {
@@ -227,7 +229,7 @@ void Klee::Update()
         if(pos_x > (screen_width-64) )
         {
             direction_vector[0] *= -1;
-            pos_x = screen_width-64;
+            pos_x = screen_width-width;
         }
 
         else if(pos_x < 0)
@@ -241,19 +243,19 @@ void Klee::Update()
         else
             direction = "left";
 
-        if(pos_y > (screen_height - 86-37) && direction_vector[1]>0)
+        if(pos_y > (screen_height - height-37) && direction_vector[1]>0)
         {
-            pos_y = screen_height - 86-37;
+            pos_y = screen_height - height-37;
             direction_vector[1] *= -0.6;
             direction_vector[0] *= 0.93;
         }
 
         if(static_cast<int>(sqrt(direction_vector[0]*direction_vector[0] + direction_vector[1]*direction_vector[1])) <= 4
-                && pos_y <= (screen_height-86-36) && pos_y >= (screen_height-86-38) )
+                && pos_y <= (screen_height-height-36) && pos_y >= (screen_height-height-38) )
         {
             direction_vector[0] = 0;
             direction_vector[1] = 0;
-            pos_y = screen_height-86-37;
+            pos_y = screen_height-height-37;
             timer_decision->start(2300);
             Decision();
         }
@@ -282,10 +284,10 @@ void Klee::Update()
             {
                 pos_x += 5;
                 cursor().setPos(pos_x+32,pos_y+43);
-                if( pos_x > (screen_width-64) )
+                if( pos_x > (screen_width-width) )
                 {
                     direction = "left";
-                    pos_x = screen_width-64;
+                    pos_x = screen_width-width;
                     cursor().setPos(pos_x+25,pos_y+43);
                 }
             }
@@ -324,4 +326,9 @@ void Klee::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void Klee::DebugT()
 {
     QTextStream(stdout) << "postac:  " << pos_x << " " << pos_y << "\n";
+}
+
+void Klee::Feed()
+{
+
 }

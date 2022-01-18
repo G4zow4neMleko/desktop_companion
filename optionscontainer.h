@@ -6,10 +6,11 @@
 #include <QPainter>
 #include <QVector>
 #include <QGraphicsScene>
-#include "option.h"
 #include <QMouseEvent>
 #include <QTimer>
 #include <QScreen>
+#include <QDialog>
+#include "option.h"
 
 class optionsContainer : public QObject, public QGraphicsItem
 {
@@ -20,8 +21,11 @@ public:
 
 private slots:
     void Update();
+    void OptionClickedEmit();
+
 
 signals:
+    void OptionClicked();
 
 private:
     int width;
@@ -29,7 +33,7 @@ private:
     int screen_width;
     int screen_height;
 
-    QVector<QGraphicsItem*> options;
+    QVector<option*> options;
     QTimer* timer_update;
 
 

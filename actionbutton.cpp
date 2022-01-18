@@ -45,9 +45,10 @@ void ActionButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 void ActionButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(!option_container)
+    if(option_container == nullptr)
     {
         option_container = new optionsContainer(this, screen);
+        connect(option_container, &optionsContainer::OptionClicked,this, &ActionButton::OptionClickedEmit);
         scene()->addItem(option_container);
     }
 
@@ -103,5 +104,10 @@ void ActionButton::SetDragTrue()
 {
     if(!draggable)
         draggable = true;
+}
+
+void ActionButton::OptionClickedEmit()
+{
+    emit OptionClicked();
 }
 
