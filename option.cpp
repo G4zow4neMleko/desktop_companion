@@ -6,23 +6,35 @@ option::option(QGraphicsItem *parent, QString t) : QObject(), QGraphicsItem()
     width = 146;
     setParentItem(parent);
     text = t;
-    color = Qt::white;
+    color = qRgb(255,255,255);
+    text_color = Qt::black;
+    setAcceptHoverEvents(true);
 }
 
 void option::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    QTextStream(stdout) << "hoverEnter\n";
-    color = Qt::lightGray;
-    update(boundingRect());
-    Q_UNUSED(event);
+    color = qRgb(237, 222, 222);
+    text_color = Qt::black;
+    this->update(boundingRect());
+     Q_UNUSED(event);
 }
 
 void option::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    QTextStream(stdout) << "hoverLeave\n";
-    color = Qt::white;
-    update(boundingRect());
+    color = qRgb(255,255,255);
+    text_color = Qt::black;
+    this->update(boundingRect());
     Q_UNUSED(event);
+}
+
+void option::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+
+}
+
+void option::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    //this->window()->parentWidget()->close();
 }
 
 QRectF option::boundingRect() const
@@ -34,8 +46,11 @@ void option::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 {
     painter->setBrush(color);
     painter->drawRect(0,0,width,height);
+    painter->setPen(text_color);
     painter->setFont(QFont("Arial",15));
     painter->drawText(boundingRect(), Qt::AlignCenter, text);
     Q_UNUSED(option);
     Q_UNUSED(widget);
 }
+
+

@@ -1,33 +1,46 @@
 #include "optionscontainer.h"
 
-optionsContainer::optionsContainer(QGraphicsItem *parent) : QObject(), QGraphicsItem()
+optionsContainer::optionsContainer(QGraphicsItem *parent, QScreen *Screen) : QObject(), QGraphicsItem()
 {
-    height = 250;
+    screen_width = Screen->geometry().width();
+    screen_height = Screen->geometry().height();
     width = 150;
     setVisible(false);
-    setPos(parent->pos().x()+parent->boundingRect().width()/2, parent->pos().y()+parent->boundingRect().height()/2);
+    setParentItem(parent);
+    setPos(parent->boundingRect().width()/2 + 2,parent->boundingRect().height()/2 + 2);
+
+    timer_update = new QTimer();
+    connect(timer_update, &QTimer::timeout, this, &optionsContainer::Update);
+    timer_update->start(25);
 
     options.append(new option(this,"dzieki"));
     options.append(new option(this,"dziala"));
+    options.append(new option(this,"alaizd"));
+    options.append(new option(this,"alaizd"));
+    options.append(new option(this,"alaizd"));
+    options.append(new option(this,"alaizd"));
     options.append(new option(this,"alaizd"));
 
     for(auto &x: options)
     {
         x->setPos(2,(x->boundingRect().height()+5) * options.indexOf(x) +5);
     }
+
+    height = (options[0]->boundingRect().height()+5) * options.size() +5;
 }
 
-//void optionsContainer::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-//{
-//    for(auto &x: options)
-//        scene()->sendEvent(x, event);
-//}
+void optionsContainer::Update()
+{
+    if( (parentItem()->pos().x() + parentItem()->boundingRect().width()/2 + width + 2) > screen_width)
+        setPos(parentItem()->boundingRect().width()/2 - 2 - width, pos().y());
+    else
+        setPos(parentItem()->boundingRect().width()/2 + 2, pos().y());
 
-//void optionsContainer::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-//{
-//    for(auto &x: options)
-//        scene()->sendEvent(x, event);
-//}
+    if( (parentItem()->pos().y() + parentItem()->boundingRect().height()/2 + height + 2) > screen_height)
+        setPos(pos().x(), parentItem()->boundingRect().height()/2 - 2 - height);
+    else
+        setPos(pos().x(), parentItem()->boundingRect().height()/2 + 2);
+}
 
 QRectF optionsContainer::boundingRect() const
 {
@@ -41,3 +54,4 @@ void optionsContainer::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     Q_UNUSED(option);
     Q_UNUSED(widget);
 }
+

@@ -9,6 +9,9 @@
 #include <QFont>
 #include <QGraphicsSceneEvent>
 #include <QMouseEvent>
+#include <QWidget>
+#include <QCoreApplication>
+#include <QGraphicsWidget>
 
 class option : public QObject, public QGraphicsItem
 {
@@ -18,16 +21,18 @@ public:
     explicit option(QGraphicsItem *parent = nullptr, QString t = "");
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneHoverEvent *event);
-    void mousePressEvent(QGraphicsSceneHoverEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
+    void clicked();
 
 private:
     int width;
     int height;
     QString text;
-    enum Qt::GlobalColor color;
+    QColor color;
+    QRgb text_color;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

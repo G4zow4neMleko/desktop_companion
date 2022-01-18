@@ -42,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(new ActionButton(screen));
     scene->addItem(new Klee(screen));
 
-
 }
 
 MainWindow::~MainWindow()
