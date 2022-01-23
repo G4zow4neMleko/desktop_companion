@@ -38,9 +38,11 @@ MainWindow::MainWindow(QWidget *parent)
     scene->setSceneRect(screen->geometry());
 
     ui->graphicsView->setScene(scene);
-    //scene->addItem(new Klee(screen));
-    scene->addItem(new ActionButton(screen));
-    scene->addItem(new Klee(screen));
+    ActionButton* a = new ActionButton(screen);
+    Klee* k = new Klee(screen);
+    scene->addItem(a);
+    scene->addItem(k);
+    connect(a, &ActionButton::OptionClicked, k, &Klee::Feed);
 
 }
 

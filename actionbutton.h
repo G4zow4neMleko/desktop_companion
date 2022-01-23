@@ -15,18 +15,21 @@
 class ActionButton : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+
 public:
     explicit ActionButton(QScreen *screen);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-
+    void OptionClicked();
 
 private slots:
     void Update();
     void DebugT();
     void SetDragTrue();
+    void OptionClickedEmit();
+
 
 private:
     int pos_x;

@@ -2,6 +2,8 @@
 
 Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 {
+    width = 64;
+    height = 86;
     blink = 1;
     frame_current = 0;
     frame_delay = 200;
@@ -11,7 +13,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     draggable = false;
     main_screen = screen;
     pos_x = screen->geometry().width()-600;
-    pos_y = screen->geometry().height()-86-37;
+    pos_y = screen->geometry().height()-height-37;
     screen_width = screen->geometry().width();
     screen_height = screen->geometry().height();
     rng_core = QRandomGenerator().global()->generate();
@@ -25,11 +27,11 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
         QPixmap QPixmap(":/sprites/klee/"+filename);
 
         for(int i=0; i< (QPixmap.size().width()/64); ++i)
-            (*frames).append(QPixmap.copy(i*64,0,64,86));
+            (*frames).append(QPixmap.copy(i*width,0,width,height));
 
         filename.chop(4);
         animation_map.insert(filename, *frames);
-        //QTextStream(stdout) << filename+"\n";
+        QTextStream(stdout) << filename+"\n";
     }
 
     timer_update = new QTimer();
@@ -47,6 +49,10 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     timer_decision = new QTimer();
     connect(timer_decision, &QTimer::timeout, this, &Klee::Decision);
     timer_decision->start(2300);
+
+    timer_food = new QTimer();
+    connect(timer_food, &QTimer::timeout, this, &Klee::DespawnFood);
+    timer_food->setSingleShot(true);
 
 //    timer_debug = new QTimer();
 //    connect(timer_debug, &QTimer::timeout, this, &Klee::DebugT);
@@ -93,7 +99,7 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
 
 QRectF Klee::boundingRect() const
 {
-    return QRectF(0,0,65,86);
+    return QRectF(0,0,width,height);
 };
 
 void Klee::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -143,7 +149,8 @@ void Klee::nextFrame()
 
 void Klee::Blink()
 {
-    if(current_sheet == "klee_catch_walk" || current_sheet == "klee_walk" || current_sheet == "klee_idle" || current_sheet == "klee_throw")
+    if(current_sheet == "klee_catch_walk" || current_sheet == "klee_walk" || current_sheet == "klee_idle"
+            || current_sheet == "klee_throw" || current_sheet == "klee_eat")
         blink = 0;
 };
 
@@ -155,41 +162,44 @@ void Klee::Decision()
         current_sheet = "klee_idle";
         direction = "front";
         timer_frame->stop();
-        nextFrame();
         frame_delay = 200;
-        timer_frame->start(frame_delay);
         break;
     case 1:
         current_sheet = "klee_walk";
         direction = "right";
         timer_frame->stop();
-        nextFrame();
         frame_delay = 60;
-        timer_frame->start(frame_delay);
         break;
     case 2:
         current_sheet = "klee_walk";
         direction = "left";
         timer_frame->stop();
-        nextFrame();
         frame_delay = 60;
-        timer_frame->start(frame_delay);
         break;
    case 3:
         current_sheet = "klee_catch_walk";
         if(direction == "front")
             direction = "left";
         timer_frame->stop();
-        nextFrame();
         frame_delay = 100;
-        timer_frame->start(frame_delay);
         break;
+    case 5:
+        current_sheet = "klee_eat";
+        timer_frame->stop();
+        frame_delay = 100;
     }
+
+    nextFrame();
+    timer_frame->start(frame_delay);
+
     decision = rng_core.bounded(4);
 };
 
 void Klee::Update()
 {
+    if(food != nullptr && draggable)
+        DespawnFood();
+    timer_decision->stop();
     if(current_sheet == "klee_walk" && direction == "left")
     {
         if(pos_x > 0)
@@ -203,7 +213,7 @@ void Klee::Update()
     }
     else if(current_sheet == "klee_walk" && direction == "right")
     {
-        if(pos_x < (screen_width-64))
+        if(pos_x < (screen_width-width))
             pos_x += 2;
         else
         {
@@ -233,7 +243,7 @@ void Klee::Update()
         if(pos_x > (screen_width-64) )
         {
             direction_vector[0] *= -1;
-            pos_x = screen_width-64;
+            pos_x = screen_width-width;
         }
 
         else if(pos_x < 0)
@@ -247,19 +257,19 @@ void Klee::Update()
         else
             direction = "left";
 
-        if(pos_y > (screen_height - 86-37) && direction_vector[1]>0)
+        if(pos_y > (screen_height - height-37) && direction_vector[1]>0)
         {
-            pos_y = screen_height - 86-37;
+            pos_y = screen_height - height-37;
             direction_vector[1] *= -0.6;
             direction_vector[0] *= 0.93;
         }
 
         if(static_cast<int>(sqrt(direction_vector[0]*direction_vector[0] + direction_vector[1]*direction_vector[1])) <= 4
-                && pos_y <= (screen_height-86-36) && pos_y >= (screen_height-86-38) )
+                && pos_y <= (screen_height-height-36) && pos_y >= (screen_height-height-38) )
         {
             direction_vector[0] = 0;
             direction_vector[1] = 0;
-            pos_y = screen_height-86-37;
+            pos_y = screen_height-height-37;
             timer_decision->start(2300);
             Decision();
         }
@@ -288,10 +298,10 @@ void Klee::Update()
             {
                 pos_x += 5;
                 cursor().setPos(pos_x+32,pos_y+43);
-                if( pos_x > (screen_width-64) )
+                if( pos_x > (screen_width-width) )
                 {
                     direction = "left";
-                    pos_x = screen_width-64;
+                    pos_x = screen_width-width;
                     cursor().setPos(pos_x+25,pos_y+43);
                 }
             }
@@ -299,6 +309,7 @@ void Klee::Update()
         else
         {
             Decision();
+            timer_decision->start(2300);
         };
     }
 
@@ -331,4 +342,30 @@ void Klee::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void Klee::DebugT()
 {
     QTextStream(stdout) << "postac:  " << pos_x << " " << pos_y << "\n";
+}
+
+void Klee::DespawnFood()
+{
+    food->setVisible(false);
+}
+
+void Klee::Feed()
+{
+    if(current_sheet != "klee_throw")
+    {
+        timer_food->stop();
+
+        if(food == nullptr)
+            food = new Food(this, &rng_core);
+        else
+            food->setVisible(true);
+        food->changeFood();
+        timer_decision->stop();
+        decision = 5;
+        Decision();
+        timer_decision->singleShot(1200,this,&Klee::Decision);
+        timer_decision->start(2300);
+        timer_food->start(1200);
+    }
+
 }

@@ -6,5 +6,8 @@
         <file>sprites/klee/klee_idle.png</file>
         <file>sprites/klee/klee_throw.png</file>
         <file>sprites/klee/klee_walk.png</file>
+        <file>sprites/food/burger.png</file>
+        <file>sprites/food/cupcake.png</file>
+        <file>sprites/klee/klee_eat.png</file>
     </qresource>
 </RCC>

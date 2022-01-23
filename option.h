@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QGraphicsItem>
-#include "optionscontainer.h"
 #include <QString>
 #include <QPainter>
 #include <QFont>
@@ -11,7 +10,6 @@
 #include <QMouseEvent>
 #include <QWidget>
 #include <QCoreApplication>
-#include <QGraphicsWidget>
 
 class option : public QObject, public QGraphicsItem
 {
@@ -23,6 +21,7 @@ public:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    QRectF boundingRect() const;
 
 signals:
     void clicked();
@@ -34,7 +33,6 @@ private:
     QColor color;
     QRgb text_color;
 
-    QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 };
 

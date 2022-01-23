@@ -29,12 +29,13 @@ void option::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void option::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
+    Q_UNUSED(event);
 }
 
 void option::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    //this->window()->parentWidget()->close();
+    emit clicked();
+    Q_UNUSED(event);
 }
 
 QRectF option::boundingRect() const

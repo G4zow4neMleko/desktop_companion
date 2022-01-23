@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     actionbutton.cpp \
+    food.cpp \
     klee.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 
 HEADERS += \
     actionbutton.h \
+    food.h \
     klee.h \
     mainwindow.h \
     option.h \
@@ -41,7 +43,10 @@ DISTFILES += \
     sprites/klee/klee_throw.png \
     sprites/klee/klee_idle.png \
     sprites/klee/klee_walk.png \
-    sprites/food/cookie.png
+    sprites/klee/klee_eat.png \
+    sprites/food/cookie.png \
+    sprites/food/burger.png \
+    sprites/food/cupcake.png
 
 RESOURCES += \
     resources.qrc

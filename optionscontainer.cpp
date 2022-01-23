@@ -13,13 +13,16 @@ optionsContainer::optionsContainer(QGraphicsItem *parent, QScreen *Screen) : QOb
     connect(timer_update, &QTimer::timeout, this, &optionsContainer::Update);
     timer_update->start(25);
 
-    options.append(new option(this,"dzieki"));
-    options.append(new option(this,"dziala"));
-    options.append(new option(this,"alaizd"));
-    options.append(new option(this,"alaizd"));
-    options.append(new option(this,"alaizd"));
-    options.append(new option(this,"alaizd"));
-    options.append(new option(this,"alaizd"));
+    options.append(new option(this,"feed"));
+    connect(options.back(), &option::clicked,this,&optionsContainer::OptionClickedEmit);
+    options.append(new option(this,"f"));
+    options.append(new option(this,"f"));
+    options.append(new option(this,"f"));
+    options.append(new option(this,"EXIT"));
+    connect(options.back(), &option::clicked,options.back(),[]()
+    {
+        QCoreApplication::quit();
+    });
 
     for(auto &x: options)
     {
@@ -40,6 +43,11 @@ void optionsContainer::Update()
         setPos(pos().x(), parentItem()->boundingRect().height()/2 - 2 - height);
     else
         setPos(pos().x(), parentItem()->boundingRect().height()/2 + 2);
+}
+
+void optionsContainer::OptionClickedEmit()
+{
+    emit OptionClicked();
 }
 
 QRectF optionsContainer::boundingRect() const

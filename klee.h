@@ -16,6 +16,7 @@
 #include <QPoint>
 #include <QGraphicsScene>
 #include <QDir>
+#include "food.h"
 
 class Klee : public QObject , public QGraphicsItem
 {
@@ -33,9 +34,14 @@ private slots:
     void Decision();
     void Update();
     void DebugT();
+    void DespawnFood();
+
+public slots:
+    void Feed();
 
 private:
-
+    int width;
+    int height;
     int frame_current;
     int pos_x;
     int pos_y;
@@ -58,6 +64,8 @@ private:
     QTimer *timer_decision;
     QTimer *timer_update;
     QTimer *timer_debug;
+    QTimer *timer_food;
+    Food *food = nullptr;
     QMap<QString,QVector<QPixmap>> animation_map;
     QString current_sheet;
     QString direction;
