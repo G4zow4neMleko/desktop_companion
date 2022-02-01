@@ -22,13 +22,13 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void OptionClicked();
+    void OptionClicked(QString text);
 
 private slots:
     void Update();
     void DebugT();
     void SetDragTrue();
-    void OptionClickedEmit();
+    void OptionClickedEmit(QString text);
 
 
 private:

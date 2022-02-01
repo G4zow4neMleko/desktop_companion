@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     Klee* k = new Klee(screen);
     scene->addItem(a);
     scene->addItem(k);
-    connect(a, &ActionButton::OptionClicked, k, &Klee::Feed);
+    connect(a, &ActionButton::OptionClicked, k, &Klee::OptionClicked);
 
 }
 

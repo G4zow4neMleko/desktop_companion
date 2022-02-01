@@ -106,8 +106,8 @@ void ActionButton::SetDragTrue()
         draggable = true;
 }
 
-void ActionButton::OptionClickedEmit()
+void ActionButton::OptionClickedEmit(QString text)
 {
-    emit OptionClicked();
+    emit OptionClicked(text);
 }
 

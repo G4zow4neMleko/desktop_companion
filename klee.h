@@ -17,6 +17,8 @@
 #include <QGraphicsScene>
 #include <QDir>
 #include "food.h"
+#include "hand.h"
+#include "curtain.h"
 
 class Klee : public QObject , public QGraphicsItem
 {
@@ -35,9 +37,11 @@ private slots:
     void Update();
     void DebugT();
     void DespawnFood();
+    void DespawnHand();
+    void DespawnCurtain();
 
 public slots:
-    void Feed();
+    void OptionClicked(QString text);
 
 private:
     int width;
@@ -50,8 +54,11 @@ private:
     int frame_delay;
     int screen_width;
     int screen_height;
+    int skin_iterator;
+    int skin_num;
     float direction_vector[2] = {0.0,0.0};
     bool draggable;
+    bool in_action;
     QScreen *main_screen;
     QRandomGenerator rng_core;
 
@@ -65,11 +72,19 @@ private:
     QTimer *timer_update;
     QTimer *timer_debug;
     QTimer *timer_food;
+    QTimer *timer_pet;
+    QTimer *timer_curtain;
     Food *food = nullptr;
+    Hand *hand = nullptr;
+    Curtain *curtain = nullptr;
     QMap<QString,QVector<QPixmap>> animation_map;
     QString current_sheet;
     QString direction;
     QRectF boundingRect() const;
+    void Feed();
+    void Pet();
+    void SkinChange();
+    void LoadSkins();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

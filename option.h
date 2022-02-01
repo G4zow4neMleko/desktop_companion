@@ -24,7 +24,7 @@ public:
     QRectF boundingRect() const;
 
 signals:
-    void clicked();
+    void clicked(QString text);
 
 private:
     int width;

@@ -5,6 +5,8 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     width = 64;
     height = 86;
     blink = 1;
+    skin_num = 2;
+    skin_iterator = 0;
     frame_current = 0;
     frame_delay = 200;
     current_sheet = "klee_idle";
@@ -17,22 +19,9 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     screen_width = screen->geometry().width();
     screen_height = screen->geometry().height();
     rng_core = QRandomGenerator().global()->generate();
+    in_action = false;
 
-
-    QDir directory(":/sprites/klee/");
-    QStringList images = directory.entryList(QStringList() << "*.png" << "*.PNG",QDir::Files);
-
-    foreach(QString filename, images) {
-        QVector<QPixmap> *frames = new QVector<QPixmap>;
-        QPixmap QPixmap(":/sprites/klee/"+filename);
-
-        for(int i=0; i< (QPixmap.size().width()/64); ++i)
-            (*frames).append(QPixmap.copy(i*width,0,width,height));
-
-        filename.chop(4);
-        animation_map.insert(filename, *frames);
-        QTextStream(stdout) << filename+"\n";
-    }
+    LoadSkins();
 
     timer_update = new QTimer();
     connect(timer_update, &QTimer::timeout, this, &Klee::Update);
@@ -53,6 +42,14 @@ Klee::Klee(QScreen *screen):QObject(), QGraphicsItem()
     timer_food = new QTimer();
     connect(timer_food, &QTimer::timeout, this, &Klee::DespawnFood);
     timer_food->setSingleShot(true);
+
+    timer_pet = new QTimer();
+    connect(timer_pet, &QTimer::timeout, this, &Klee::DespawnHand);
+    timer_pet->setSingleShot(true);
+
+    timer_curtain = new QTimer();
+    connect(timer_curtain, &QTimer::timeout, this, &Klee::DespawnCurtain);
+    timer_curtain->setSingleShot(true);
 
 //    timer_debug = new QTimer();
 //    connect(timer_debug, &QTimer::timeout, this, &Klee::DebugT);
@@ -193,13 +190,16 @@ void Klee::Decision()
     timer_frame->start(frame_delay);
 
     decision = rng_core.bounded(4);
+
 };
 
 void Klee::Update()
 {
     if(food != nullptr && draggable)
         DespawnFood();
-    timer_decision->stop();
+    if(hand != nullptr && draggable)
+        DespawnHand();
+
     if(current_sheet == "klee_walk" && direction == "left")
     {
         if(pos_x > 0)
@@ -272,6 +272,7 @@ void Klee::Update()
             pos_y = screen_height-height-37;
             timer_decision->start(2300);
             Decision();
+            in_action = false;
         }
 
         direction_vector[1] += 9;
@@ -324,6 +325,7 @@ void Klee::mousePressEvent(QGraphicsSceneMouseEvent *event)
     //QTextStream(stdout) << "press: " << typeid(it).name() << "\n" << event->pos().x() << " " << event->pos().y() << "\n";
     if(event->button() == Qt::LeftButton)
     {
+        in_action = true;
         draggable = true;
         current_sheet = "klee_throw";
         timer_decision->stop();
@@ -347,11 +349,49 @@ void Klee::DebugT()
 void Klee::DespawnFood()
 {
     food->setVisible(false);
+    if(current_sheet != "klee_throw")
+    {
+        Decision();
+        in_action = false;
+    }
+}
+
+void Klee::DespawnHand()
+{
+    hand->setVisible(false);
+    if(current_sheet != "klee_throw")
+    {
+        Decision();
+        in_action = false;
+    }
+}
+
+void Klee::DespawnCurtain()
+{
+    curtain->setVisible(false);
+    if(current_sheet != "klee_throw")
+    {
+        Decision();
+        in_action = false;
+    }
+}
+
+void Klee::OptionClicked(QString text)
+{
+    if(!in_action)
+    {
+       if(text == "feed")
+            Feed();
+       else if(text == "pet")
+            Pet();
+       else if(text == "change skin")
+            SkinChange();
+    }
 }
 
 void Klee::Feed()
 {
-    if(current_sheet != "klee_throw")
+    if(!in_action)
     {
         timer_food->stop();
 
@@ -360,12 +400,71 @@ void Klee::Feed()
         else
             food->setVisible(true);
         food->changeFood();
+        in_action = true;
         timer_decision->stop();
         decision = 5;
         Decision();
-        timer_decision->singleShot(1200,this,&Klee::Decision);
         timer_decision->start(2300);
         timer_food->start(1200);
     }
 
+}
+
+void Klee::Pet()
+{
+    if(!in_action)
+    {
+        if(hand == nullptr)
+            hand = new Hand(this);
+        else
+            hand->setVisible(true);
+        timer_decision->stop();
+        in_action = true;
+        decision = 0;
+        Decision();
+        timer_decision->start(2300);
+        timer_pet->start(1200);
+    }
+}
+
+void Klee::SkinChange()
+{
+    if(!in_action)
+    {
+        if(curtain == nullptr)
+            curtain = new Curtain(this);
+        else
+            curtain->setVisible(true);
+        timer_decision->stop();
+        in_action = true;
+        decision = 0;
+        Decision();
+        timer_decision->start(2300);
+        timer_curtain->start(1000);
+        skin_iterator = (skin_iterator+1) % skin_num;
+        LoadSkins();
+        nextFrame();
+    }
+}
+
+void Klee::LoadSkins()
+{
+    animation_map.clear();
+    QDir directory(":/sprites/klee/s"+QString::number(skin_iterator)+"/");
+    //QTextStream(stdout) << ":/sprites/klee/s"+QString::number(skin_iterator)+"/\n";
+    QStringList images = directory.entryList(QStringList() << "*.png" << "*.PNG",QDir::Files);
+
+    foreach(QString filename, images)
+    {
+        QVector<QPixmap> *frames = new QVector<QPixmap>;
+        QPixmap QPixmap(":/sprites/klee/s"+QString::number(skin_iterator)+"/"+filename);
+
+        for(int i=0; i< (QPixmap.size().width()/64); ++i)
+            (*frames).append(QPixmap.copy(i*width,0,width,height));
+
+        filename.chop(4);
+        animation_map.insert(filename, *frames);
+        //QTextStream(stdout) << animation_map[current_sheet].length() << "\n";
+        //QTextStream(stdout) << filename+"\n";
+    }
 }

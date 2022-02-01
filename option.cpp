@@ -34,7 +34,7 @@ void option::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void option::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    emit clicked();
+    emit clicked(text);
     Q_UNUSED(event);
 }
 

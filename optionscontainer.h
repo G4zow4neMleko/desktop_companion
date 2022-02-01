@@ -22,11 +22,11 @@ public:
 
 private slots:
     void Update();
-    void OptionClickedEmit();
+    void OptionClickedEmit(QString text);
 
 
 signals:
-    void OptionClicked();
+    void OptionClicked(QString text);
 
 private:
     int width;

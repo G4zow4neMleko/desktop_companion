@@ -10,7 +10,9 @@ CONFIG += c++11
 
 SOURCES += \
     actionbutton.cpp \
+    curtain.cpp \
     food.cpp \
+    hand.cpp \
     klee.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,7 +24,9 @@ SOURCES += \
 
 HEADERS += \
     actionbutton.h \
+    curtain.h \
     food.h \
+    hand.h \
     klee.h \
     mainwindow.h \
     option.h \
@@ -38,12 +42,18 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    sprites/klee/klee_catch.png \
-    sprites/klee/klee_catch_walk.png \
-    sprites/klee/klee_throw.png \
-    sprites/klee/klee_idle.png \
-    sprites/klee/klee_walk.png \
-    sprites/klee/klee_eat.png \
+    sprites/klee/s0/klee_catch.png \
+    sprites/klee/s0/klee_catch_walk.png \
+    sprites/klee/s0/klee_throw.png \
+    sprites/klee/s0/klee_idle.png \
+    sprites/klee/s0/klee_walk.png \
+    sprites/klee/s0/klee_eat.png \
+    sprites/klee/s1/klee_catch.png \
+    sprites/klee/s1/klee_catch_walk.png \
+    sprites/klee/s1/klee_throw.png \
+    sprites/klee/s1/klee_idle.png \
+    sprites/klee/s1/klee_walk.png \
+    sprites/klee/s1/klee_eat.png \
     sprites/food/cookie.png \
     sprites/food/burger.png \
     sprites/food/cupcake.png

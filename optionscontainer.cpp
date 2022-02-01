@@ -15,9 +15,10 @@ optionsContainer::optionsContainer(QGraphicsItem *parent, QScreen *Screen) : QOb
 
     options.append(new option(this,"feed"));
     connect(options.back(), &option::clicked,this,&optionsContainer::OptionClickedEmit);
-    options.append(new option(this,"f"));
-    options.append(new option(this,"f"));
-    options.append(new option(this,"f"));
+    options.append(new option(this,"pet"));
+    connect(options.back(), &option::clicked,this,&optionsContainer::OptionClickedEmit);
+    options.append(new option(this,"change skin"));
+    connect(options.back(), &option::clicked,this,&optionsContainer::OptionClickedEmit);
     options.append(new option(this,"EXIT"));
     connect(options.back(), &option::clicked,options.back(),[]()
     {
@@ -45,9 +46,9 @@ void optionsContainer::Update()
         setPos(pos().x(), parentItem()->boundingRect().height()/2 + 2);
 }
 
-void optionsContainer::OptionClickedEmit()
+void optionsContainer::OptionClickedEmit(QString text)
 {
-    emit OptionClicked();
+    emit OptionClicked(text);
 }
 
 QRectF optionsContainer::boundingRect() const
